@@ -35,6 +35,7 @@ If the import does not work follow the steps below.
 TROUBLE SHOOTING
 
 Switch Java Compiler to 1.6 if you get VM problems. (Processing should work with Java 1.6, and 1.7)
+Tested and developed with 1.8.0.60. Newer JDK versions (version 9 and onwards) no longer support PApplet
 
 
 

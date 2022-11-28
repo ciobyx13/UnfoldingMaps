@@ -16,6 +16,7 @@ import de.fhpotsdam.unfolding.data.PointFeature;
 import de.fhpotsdam.unfolding.marker.SimplePointMarker;
 import de.fhpotsdam.unfolding.providers.Google;
 import de.fhpotsdam.unfolding.providers.MBTilesMapProvider;
+import de.fhpotsdam.unfolding.providers.Microsoft;
 import de.fhpotsdam.unfolding.utils.MapUtils;
 
 //Parsing library
@@ -24,7 +25,7 @@ import parsing.ParseFeed;
 /** EarthquakeCityMap
  * An application with an interactive map displaying earthquake data.
  * Author: UC San Diego Intermediate Software Development MOOC team
- * @author Your name here
+ * @author Andrei Cioboata
  * Date: July 17, 2015
  * */
 public class EarthquakeCityMap extends PApplet {
@@ -47,7 +48,8 @@ public class EarthquakeCityMap extends PApplet {
 	private UnfoldingMap map;
 	
 	//feed with magnitude 2.5+ Earthquakes
-	private String earthquakesURL = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.atom";
+	//private String earthquakesURL = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.atom";
+	private String earthquakesURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.atom";
 
 	
 	public void setup() {
@@ -58,7 +60,7 @@ public class EarthquakeCityMap extends PApplet {
 		    earthquakesURL = "2.5_week.atom"; 	// Same feed, saved Aug 7, 2015, for working offline
 		}
 		else {
-			map = new UnfoldingMap(this, 200, 50, 700, 500, new Google.GoogleMapProvider());
+			map = new UnfoldingMap(this, 200, 50, 700, 500, new Microsoft.HybridProvider());
 			// IF YOU WANT TO TEST WITH A LOCAL FILE, uncomment the next line
 			//earthquakesURL = "2.5_week.atom";
 		}
@@ -83,11 +85,32 @@ public class EarthquakeCityMap extends PApplet {
 	    	// PointFeatures also have a getLocation method
 	    }
 	    
-	    // Here is an example of how to use Processing's color method to generate 
-	    // an int that represents the color yellow.  
-	    int yellow = color(255, 255, 0);
+	    int markerColor = 0;
+	    PointFeature feature;
+	    float magnitude = 0;
+	    float radius = 0;
 	    
-	    //TODO: Add code here as appropriate
+	    for (int i = 0; i < earthquakes.size(); i++) {
+	    	feature = earthquakes.get(i);
+	    	magnitude = Float.parseFloat(feature.getProperty("magnitude").toString());
+	    	if (magnitude < 4){
+	    		markerColor = color(0, 0, 255);
+	    		radius = 8;
+	    	}
+	    	else if (magnitude < 5){
+	    		markerColor = color(255, 255, 0);
+	    		radius = 15;
+	    	}else {
+	    		markerColor = color(255, 0, 0);
+	    		radius = 22;
+	    	}
+	    		
+	    	SimplePointMarker s = createMarker(feature);
+	    	s.setColor(markerColor);
+	    	s.setRadius(radius);;
+	    	markers.add(s);
+	    }
+	    map.addMarkers(markers);
 	}
 		
 	// A suggested helper method that takes in an earthquake feature and 
@@ -110,7 +133,18 @@ public class EarthquakeCityMap extends PApplet {
 	// TODO: Implement this method to draw the key
 	private void addKey() 
 	{	
-		// Remember you can use Processing's graphics methods here
+		textSize(14);
+		fill(color(200, 200, 200));
+		text("Earthquake key", 20, 50); 
+		text("5.0+ magnitude", 40, 150); 
+		text("4.0+ magnitude", 40, 200); 
+		text("Below 4.0 magnitude", 40, 250); 
+		fill(color(255, 0, 0));
+		ellipse(20, 145, 22, 22);
+		fill(color(255, 255, 0));
+		ellipse(20, 195, 15, 15);
+		fill(color(0, 0, 255));
+		ellipse(20, 245, 8, 8);
 	
 	}
 }

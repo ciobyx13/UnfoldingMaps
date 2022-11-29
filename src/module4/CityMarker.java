@@ -9,14 +9,14 @@ import processing.core.PGraphics;
 /** Implements a visual marker for cities on an earthquake map
  * 
  * @author UC San Diego Intermediate Software Development MOOC team
- * @author Your name here
+ * @author Andrei Cioboata
  *
  */
 public class CityMarker extends SimplePointMarker {
 	
 	// The size of the triangle marker
 	// It's a good idea to use this variable in your draw method
-	public static final int TRI_SIZE = 5;  
+	public static final int TRI_SIZE = 7;  
 	
 	public CityMarker(Location location) {
 		super(location);
@@ -41,8 +41,9 @@ public class CityMarker extends SimplePointMarker {
 	public void draw(PGraphics pg, float x, float y) {
 		// Save previous drawing style
 		pg.pushStyle();
+		pg.fill(255,0,0);
 		
-		// TODO: Add code to draw a triangle to represent the CityMarker
+		pg.triangle(x-TRI_SIZE, y+TRI_SIZE, x+TRI_SIZE, y+TRI_SIZE, x, y-TRI_SIZE);
 		
 		// Restore previous drawing style
 		pg.popStyle();

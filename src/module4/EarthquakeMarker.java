@@ -7,7 +7,7 @@ import processing.core.PGraphics;
 /** Implements a visual marker for earthquakes on an earthquake map
  * 
  * @author UC San Diego Intermediate Software Development MOOC team
- * @author Your name here
+ * @author Andrei Cioboata
  *
  */
 public abstract class EarthquakeMarker extends SimplePointMarker
@@ -35,6 +35,7 @@ public abstract class EarthquakeMarker extends SimplePointMarker
 	public static final float THRESHOLD_INTERMEDIATE = 70;
 	/** Greater than or equal to this threshold is a deep depth */
 	public static final float THRESHOLD_DEEP = 300;
+	
 
 	// ADD constants for colors
 
@@ -50,9 +51,9 @@ public abstract class EarthquakeMarker extends SimplePointMarker
 		// Add a radius property and then set the properties
 		java.util.HashMap<String, Object> properties = feature.getProperties();
 		float magnitude = Float.parseFloat(properties.get("magnitude").toString());
-		properties.put("radius", 2*magnitude );
+		properties.put("radius", 3*magnitude );
 		setProperties(properties);
-		this.radius = 1.75f*getMagnitude();
+		this.radius = 4.0f*getMagnitude();
 	}
 	
 
@@ -60,6 +61,11 @@ public abstract class EarthquakeMarker extends SimplePointMarker
 	public void draw(PGraphics pg, float x, float y) {
 		// save previous styling
 		pg.pushStyle();
+		float xSize = (float) (0.6 * this.radius);
+		if (this.getProperties().get("age").equals("Past Day")) {
+			pg.line(x-xSize, y-xSize, x+xSize, y+xSize);
+			pg.line(x-xSize, y+xSize, x+xSize, y-xSize);
+		}
 			
 		// determine color of marker from depth
 		colorDetermine(pg);
@@ -79,7 +85,16 @@ public abstract class EarthquakeMarker extends SimplePointMarker
 	// But this is up to you, of course.
 	// You might find the getters below helpful.
 	private void colorDetermine(PGraphics pg) {
-		//TODO: Implement this method
+
+		float depth = Float.parseFloat(properties.get("depth").toString());
+		if (depth < THRESHOLD_INTERMEDIATE) {
+			pg.fill(255,255,0);
+		}else 
+			if (depth < THRESHOLD_DEEP) {
+				pg.fill(0,0,255);
+			}
+			else pg.fill(255,0,0);
+			
 	}
 	
 	

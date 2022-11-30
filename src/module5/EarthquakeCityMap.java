@@ -8,11 +8,13 @@ import de.fhpotsdam.unfolding.data.Feature;
 import de.fhpotsdam.unfolding.data.GeoJSONReader;
 import de.fhpotsdam.unfolding.data.PointFeature;
 import de.fhpotsdam.unfolding.geo.Location;
+import de.fhpotsdam.unfolding.marker.AbstractMarker;
 import de.fhpotsdam.unfolding.marker.AbstractShapeMarker;
 import de.fhpotsdam.unfolding.marker.Marker;
 import de.fhpotsdam.unfolding.marker.MultiMarker;
 import de.fhpotsdam.unfolding.providers.Google;
 import de.fhpotsdam.unfolding.providers.MBTilesMapProvider;
+import de.fhpotsdam.unfolding.providers.Microsoft;
 import de.fhpotsdam.unfolding.utils.MapUtils;
 import parsing.ParseFeed;
 import processing.core.PApplet;
@@ -70,7 +72,7 @@ public class EarthquakeCityMap extends PApplet {
 		    earthquakesURL = "2.5_week.atom";  // The same feed, but saved August 7, 2015
 		}
 		else {
-			map = new UnfoldingMap(this, 200, 50, 650, 600, new Google.GoogleMapProvider());
+			map = new UnfoldingMap(this, 200, 50, 650, 600, new Microsoft.HybridProvider());
 			// IF YOU WANT TO TEST WITH A LOCAL FILE, uncomment the next line
 		    //earthquakesURL = "2.5_week.atom";
 		}
@@ -146,6 +148,14 @@ public class EarthquakeCityMap extends PApplet {
 	private void selectMarkerIfHover(List<Marker> markers)
 	{
 		// TODO: Implement this method
+		//isinside
+		for (Marker m : markers) {
+			if (m.isInside(map, mouseX, mouseY) && lastSelected == null) {
+				lastSelected = (CommonMarker) m;
+				lastSelected.setSelected(true);
+			}
+		}
+		
 	}
 	
 	/** The event handler for mouse clicks
@@ -159,6 +169,25 @@ public class EarthquakeCityMap extends PApplet {
 		// TODO: Implement this method
 		// Hint: You probably want a helper method or two to keep this code
 		// from getting too long/disorganized
+		if (lastClicked != null || lastSelected == null) {
+			//lasstClicked.setClicked(false);
+			lastClicked = null;
+			unhideMarkers();
+		} else {
+			lastClicked = lastSelected;
+			// lastClicked.setClicked(true);
+			hideMarkersOutsideVecinity(lastClicked);
+		}
+	}
+	
+	private void hideMarkersOutsideVecinity(Marker city) {
+		for (Marker m : quakeMarkers) {
+			double distance = m.getDistanceTo(city.getLocation());
+			float magnitude = Float.parseFloat(m.getProperty("magnitude").toString());
+			if (distance > 20 * Math.pow(1.8, (magnitude))) {
+				m.setHidden(true);
+			}
+		}
 	}
 	
 	

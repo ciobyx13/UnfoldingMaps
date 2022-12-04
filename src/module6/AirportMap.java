@@ -81,7 +81,7 @@ public class AirportMap extends PApplet {
 		
 		
 		//UNCOMMENT IF YOU WANT TO SEE ALL ROUTES
-		//map.addMarkers(routeList);
+		map.addMarkers(routeList);
 		
 		map.addMarkers(airportList);
 		
